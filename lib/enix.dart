@@ -2,3 +2,4 @@
 library enix;
 
 export 'src/enix.dart';
+export 'src/models/message.dart';
