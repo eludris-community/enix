@@ -14,8 +14,8 @@ class Gateway implements Disposable {
   WebSocket? _ws;
   final List<StreamSubscription?> _subs = [];
 
-  final _onMessageCreate = StreamController<Message>();
-  final _onConnected = StreamController<void>();
+  final _onMessageCreate = StreamController<Message>.broadcast();
+  final _onConnected = StreamController<void>.broadcast();
 
   Gateway({required String url}) : _url = url;
   Stream<void> get onConnected => _onConnected.stream;
