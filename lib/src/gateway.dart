@@ -17,6 +17,8 @@ class Gateway implements Disposable {
   final _onMessageCreate = StreamController<Message>.broadcast();
   final _onConnected = StreamController<void>.broadcast();
 
+  int _reconnectTimeout = 5;
+
   Gateway({required String url}) : _url = url;
   Stream<void> get onConnected => _onConnected.stream;
 
@@ -24,14 +26,20 @@ class Gateway implements Disposable {
 
   Future<void> connect() async {
     _ws = await WebSocket.connect(_url);
+    _reconnectTimeout = 5;
+
     _ws!.done.then((_) async {
       if (_ws!.closeCode == null) {
         return;
       }
       _logger.warning('Gateway closed with code ${_ws!.closeCode} and reason '
           '"${_ws!.closeReason}');
-      _logger.info('Reconnecting in 5 seconds.');
-      await Future.delayed(Duration(seconds: 5));
+      _logger.info('Reconnecting in $_reconnectTimeout seconds.');
+
+      await Future.delayed(Duration(seconds: _reconnectTimeout));
+
+      _reconnectTimeout *= 2;
+
       await dispose();
       await connect();
     });
