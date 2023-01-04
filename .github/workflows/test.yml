@@ -1,0 +1,17 @@
+name: Run Tests
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Setup Dart SDK
+        uses: dart-lang/setup-dart@v1.3
+      - name: Install Dependencies
+        run: dart pub get
+      - name: Run Tests
+        run: dart run test
