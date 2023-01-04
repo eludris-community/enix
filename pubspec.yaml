@@ -1,6 +1,6 @@
 name: enix
 description: An Eludris API wrapper for Dart.
-version: 0.2.0
+version: 1.0.0
 repository: https://github.com/eludris-community/enix
 
 environment:
