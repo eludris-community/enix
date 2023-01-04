@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:enix/src/models/instanceinfo.dart';
 import 'package:http/http.dart';
 import 'package:logging/logging.dart';
 
@@ -20,5 +21,10 @@ class Rest {
     _logger.fine('POST $_baseURL/messages with $d');
 
     await _client.post(Uri.parse('$_baseURL/messages'), body: d);
+  }
+
+  Future<InstanceInfo> getInstanceInfo() async {
+    final res = await _client.get(Uri.parse(_baseURL));
+    return InstanceInfo.fromJson(jsonDecode(res.body));
   }
 }

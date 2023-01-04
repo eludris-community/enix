@@ -9,13 +9,13 @@ class Enix implements Disposable {
   static const String version = '0.1.0';
   final String name;
 
-  final Gateway gateway;
-  final Rest _rest;
+  late final Gateway gateway;
+  late final Rest _rest;
 
-  Enix(
-      {required this.name, required String gatewayURL, required String restURL})
-      : gateway = Gateway(url: gatewayURL),
-        _rest = Rest(baseURL: restURL);
+  Enix({required this.name, required String restURL, String? gatewayURL}) {
+    _rest = Rest(baseURL: restURL);
+    gateway = Gateway(url: gatewayURL, rest: _rest);
+  }
 
   Future<void> connect() async {
     ProcessSignal.sigint.watch().listen((_) async {

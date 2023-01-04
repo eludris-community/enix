@@ -4,12 +4,14 @@ import 'dart:io';
 
 import 'package:enix/src/abc.dart';
 import 'package:enix/src/models/message.dart';
+import 'package:enix/src/rest.dart';
 import 'package:logging/logging.dart';
 
 final _logger = Logger('Gateway');
 
 class Gateway implements Disposable {
-  final String _url;
+  String? _url;
+  final Rest _rest;
 
   WebSocket? _ws;
   final List<StreamSubscription?> _subs = [];
@@ -19,13 +21,21 @@ class Gateway implements Disposable {
 
   int _reconnectTimeout = 5;
 
-  Gateway({required String url}) : _url = url;
+  Gateway({String? url, required Rest rest})
+      : _url = url,
+        _rest = rest;
   Stream<void> get onConnected => _onConnected.stream;
 
   Stream<Message> get onMessageCreate => _onMessageCreate.stream;
 
   Future<void> connect() async {
-    _ws = await WebSocket.connect(_url);
+    if (_url == null) {
+      final info = await _rest.getInstanceInfo();
+      _url = info.pandemoniumUrl;
+      _logger.info('Got gateway URL over REST: $_url');
+    }
+
+    _ws = await WebSocket.connect(_url!);
     _reconnectTimeout = 5;
 
     _ws!.done.then((_) async {
